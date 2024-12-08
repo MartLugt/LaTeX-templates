@@ -1,0 +1,146 @@
+\documentclass[a4paper]{article}
+
+%%%%%%%% CREATE DOCUMENT STRUCTURE %%%%%%%%
+%% Language and font encodings
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+%\usepackage{subfig}
+
+\usepackage[british]{babel}
+
+%% Sets page size and margins
+\usepackage[a4paper,top=2.5cm,bottom=2cm,left=2cm,right=2cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+% \usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+% \usepackage{sectsty}
+\usepackage{csquotes}
+% \usepackage{apacite}
+\usepackage{lipsum}
+
+\usepackage{pdfpages}
+\usepackage{float}
+
+\usepackage{booktabs}
+
+\usepackage{authblk}
+\usepackage{xfrac}
+\usepackage{titling} 
+\usepackage{blindtext}
+\usepackage{xcolor}
+
+\usepackage{siunitx}
+
+\usepackage{wrapfig}
+\usepackage[medium]{titlesec}
+
+\usepackage[format=plain,font={it}]{caption}
+
+\usepackage[backend=biber,style=chem-acs,autocite=superscript,maxbibnames=99,articletitle=true]{biblatex}
+\addbibresource{references.bib}
+
+\makeatletter
+\renewcommand{\@seccntformat}[1]{}
+\makeatother
+
+\renewcommand{\thefootnote}{\roman{footnote}}
+
+\renewenvironment{abstract}{\vspace{0.5ex}\begin{quote}}{\par\end{quote}\vskip 1ex\hrule\vskip 2ex}
+
+\titleformat*{\subsection}{\bfseries}
+
+%%%%%%%% DOCUMENT %%%%%%%%
+\begin{document}
+
+%%%% Title Page
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} 							% horizontal line and its thickness
+\center 
+ 
+% University
+\textsc{\LARGE Vrije Universiteit Amsterdam}\\[3.6cm]
+
+% Document info
+% \textsc{\Large Molecular Modeling}\\[0.6cm]
+
+% \textsc{\large as}\\[1cm] 										% Course Code
+\HRule \\[0.8cm]
+{ \huge \bfseries Title}\\[0.8cm]								% Assignment
+\HRule \\[2cm]
+\large
+\emph{Author:}\\[0.1cm]
+Mart van der Lugt \\ {\href{mailto:m.j.van.der.lugt@student.vu.nl}{m.j.van.der.lugt@student.vu.nl}} \\ {\footnotesize Student number: 2782775}\\[2.4cm]	% Author info
+
+\emph{Course staff:}\\[0.1cm]
+Dr. David Poole\\[0.1cm]
+Dr. Daan Geerke\\[1.0cm]
+
+{\large \today}\\[2.6cm]
+\includegraphics[width=0.6\textwidth]{figures/VU-logo_druk.pdf}\\[1cm] 	% University logo
+\vfill 
+\end{titlepage}
+
+
+\tableofcontents
+\newpage
+% \begin{abstract}
+% %Your abstract.
+% \lipsum[1]
+% \end{abstract}
+
+%%%% SECTIONS
+\twocolumn
+\input{introduction}
+
+\input{method}
+
+\input{results}
+
+\input{discussion}
+
+\input{conclusion}
+\onecolumn
+
+
+%% hou deze structuur aan voor afbeeldingen
+%%\begin{figure}[H]
+%%\includegraphics[]{Pendulum.jpg}
+%%\caption{Sketch of the pendulum}
+%%\label{fig:pendulum}
+%%\end{figure}
+
+\newpage
+
+\section{References}
+\printbibliography[heading=none]
+
+\newpage
+
+\phantomsection
+\appendix
+\addcontentsline{toc}{section}{\protect\numberline{}Appendix}%
+
+\makeatletter
+\def\@seccntformat#1{\csname the#1\endcsname\quad}
+\makeatother
+
+% Set figures and tables to: 'A.1' style
+\renewcommand{\thetable}{\Alph{section}.\arabic{table}}
+\renewcommand{\thefigure}{\Alph{section}.\arabic{figure}}
+
+% Reset counters for every appendix chapter
+\setcounter{table}{0}
+\setcounter{figure}{0}
+% \setcounter{footnote}{0}
+
+\section{Additional Figures}
+
+
+\end{document}
