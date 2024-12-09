@@ -16,15 +16,29 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{vu_paper}[2024/12/07 vu paper template]
 
-\LoadClass[a4paper]{article}
+\def\english{english}
+\def\dutch{dutch}
+
+\makeatletter
+
 
 % OPTIONS:
+\DeclareOption{toc}{\def\includeTOC{true}}
 \DeclareOption{notoc}{\def\includeTOC{false}}
 % todo: no title page
-% todo: language for title page
+% todo: short
+\DeclareOption{english}{\def\@lang{english}}
+\DeclareOption{dutch}{\def\@lang{dutch}}
 
+% Pass all unknown options to parent (article) class.
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
+
+\ExecuteOptions{toc, english}
 \ProcessOptions\relax
 
+\LoadClass[10pt, a4paper]{article}
+
+\makeatother
 
 %%%%%%%%% PACKAGES %%%%%%%%%%%
 %% Language and font encodings
@@ -45,9 +59,8 @@
 
 \RequirePackage[format=plain,font={it}]{caption}
 
-\RequirePackage[backend=biber,style=chem-acs,autocite=superscript,maxbibnames=99,articletitle=true]{biblatex}
 
-%\setcounter{secnumdepth}{0}
+\RequirePackage[backend=biber,style=chem-acs,autocite=superscript,maxbibnames=99,articletitle=true]{biblatex}
 
 % Disable numbering in the main document sections
 \titleformat{\section}[block]{\normalfont\Large\bfseries}{}{0pt}{}{}
@@ -70,10 +83,14 @@
 \def\@email{}
 \def\@studentnumber{}
 \def\@coursestaff{}
+\newcounter{coursestaffcount}
+\setcounter{coursestaffcount}{0}
 
 % todo: email, affiliation
 \newcommand{\addcoursestaff}[1]{%
   \g@addto@macro\@coursestaff{#1 \\[0.1cm]}%
+  \stepcounter{coursestaffcount}%
+  \setstrings
 }
 
 \RenewDocumentCommand{\author}{m o o}{%
@@ -84,8 +101,37 @@
   \IfValueTF{#3}{%
     \gdef\@studentnumber{#3}%
   }{}%
+  \setstrings
 }
 
+% Set strings
+\newcommand{\setstrings}{%
+  \ifx\@lang\@undefined
+    \def\authorlabel{Author:}%
+    \def\studentnumberlabel{Student number: }%
+    \def\coursestafflabel{Course staff:}%
+    \def\referenceslabel{References}%
+  \else
+    \ifx\@lang\english
+      \def\authorlabel{Author:}%
+      \def\studentnumberlabel{Student number: }%
+      \def\coursestafflabel{Course staff:}%
+      \def\referenceslabel{References}%
+    \fi
+    \ifx\@lang\dutch
+      \def\authorlabel{Auteur:}%
+      \def\studentnumberlabel{Studentnummer: }%
+      \ifnum\value{coursestaffcount}<2
+        \def\coursestafflabel{Docent:}%
+      \else
+        \def\coursestafflabel{Docenten:}%
+      \fi
+      \def\referenceslabel{Referenties}%
+    \fi
+  \fi
+}
+
+\setstrings
 
 \renewcommand{\maketitle}{%
     \begin{titlepage}%
@@ -101,13 +147,12 @@
         % todo: Course info (opt)
         %\textsc{\Large Molecular Modeling}\\[0.6cm]
 
-        %\textsc{\large as}\\[1cm] 										% Course Code
         \HRule \\[0.8cm]
         { \huge \bfseries \@title}\\[0.6cm]								% Assignment
         \HRule \\%[2cm]
         \vfill
         \large
-        \emph{Author:}\\[0.1cm]
+        \emph{\authorlabel}\\[0.1cm]
         {\@authname}
         \ifx\@email\@empty
           % No email
@@ -117,14 +162,14 @@
         \ifx\@studentnumber\@empty
           % No studentnumber
         \else
-          {\\ \footnotesize Student number: \@studentnumber}	% Author info
+          {\\ \footnotesize \studentnumberlabel  \@studentnumber}	% Author info
         \fi
         \\[1.4cm]
 
        \ifx\@coursestaff\@empty
          % No course staff
        \else
-          \emph{Course staff:}\\[0.1cm]
+          \emph{\coursestafflabel}\\[0.1cm]
           \@coursestaff
           \vspace{1.3cm}
        \fi
@@ -137,11 +182,17 @@
 
 \makeatother
 
-\ifx\includeTOC\undefined
+\ifx\includeTOC\true
   \AtBeginDocument{%
     \maketitle
     \clearpage
     \tableofcontents
+    \newpage
+    \twocolumn
+  }
+\else
+  \AtBeginDocument{%
+    \maketitle
     \newpage
     \twocolumn
   }
@@ -154,8 +205,13 @@
 
 \newcommand{\printSingleColumnBibliography}{%
   \startSingleColumn
-  \section{References}
+  \section{\referenceslabel}
   \printbibliography[heading=none]
+}
+
+\newcommand{\printInlineBibliograpy}{%
+  \section{\referenceslabel}
+  \printbibliograpy[heading=none]
 }
 
 \newcommand{\appendices}{%
@@ -170,8 +226,8 @@
   \titleformat{\subsection}[block]{\normalfont\large\bfseries}{}{0pt}{\thesubsection.\ }
 
   % Set figures and tables to: 'A.1' style
-  \renewcommand{\thetable}{\Alph{section}.\arabic{table}}
-  \renewcommand{\thefigure}{\Alph{section}.\arabic{figure}}
+  \renewcommand{\thetable}{\thesection.\arabic{table}}
+  \renewcommand{\thefigure}{\thesection.\arabic{figure}}
 
   % Reset counters for every appendix chapter
   \setcounter{table}{0}
