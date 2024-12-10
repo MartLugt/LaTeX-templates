@@ -21,24 +21,57 @@
 
 \makeatletter
 
+\newif\if@usetitlepage
+\newif\if@useTOC
+\newif\if@useInlineBIB
+
+\@usetitlepagetrue
+\@useTOCtrue
+\@useInlineBIBfalse
+
 
 % OPTIONS:
-\DeclareOption{toc}{\def\includeTOC{true}}
-\DeclareOption{notoc}{\def\includeTOC{false}}
-% todo: no title page
-% todo: short
+\DeclareOption{short}{%
+  \@usetitlepagefalse
+  \@useTOCfalse
+  \@useInlineBIBtrue
+}
+
+\DeclareOption{titlepage}{%
+  \@usetitlepagetrue
+  \@useTOCtrue
+}
+\DeclareOption{notitlepage}{%
+  \@usetitlepagefalse
+  \@useTOCfalse
+}
+
+\DeclareOption{toc}{%
+  \@useTOCtrue
+}
+\DeclareOption{notoc}{%
+  \@useTOCfalse
+}
+
+\DeclareOption{inlinebib}{%
+  \@useInlineBIBtrue
+}
+
+\DeclareOption{noinlinebib}{%
+  \@useInlineBIBfalse
+}
+
 \DeclareOption{english}{\def\@lang{english}}
 \DeclareOption{dutch}{\def\@lang{dutch}}
 
 % Pass all unknown options to parent (article) class.
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 
-\ExecuteOptions{toc, english}
+\ExecuteOptions{titlepage, toc, english}
 \ProcessOptions\relax
 
 \LoadClass[10pt, a4paper]{article}
 
-\makeatother
 
 %%%%%%%%% PACKAGES %%%%%%%%%%%
 %% Language and font encodings
@@ -69,7 +102,6 @@
 \setcounter{secnumdepth}{2} % Ensure sections are numbered internally
 \setcounter{tocdepth}{2}    % Ensure they appear in the TOC
 
-\makeatletter
 
 \renewcommand{\thefootnote}{\roman{footnote}}
 
@@ -83,6 +115,8 @@
 \def\@email{}
 \def\@studentnumber{}
 \def\@coursestaff{}
+\def\@coursename{}
+\def\@coursecode{}
 \newcounter{coursestaffcount}
 \setcounter{coursestaffcount}{0}
 
@@ -91,6 +125,13 @@
   \g@addto@macro\@coursestaff{#1 \\[0.1cm]}%
   \stepcounter{coursestaffcount}%
   \setstrings
+}
+
+\NewDocumentCommand{\coursename}{m o}{%
+  \gdef\@coursename{#1}%
+  \IfValueTF{#2}{%
+    \gdef\@coursecode{#2}%
+  }{}
 }
 
 \RenewDocumentCommand{\author}{m o o}{%
@@ -134,6 +175,7 @@
 \setstrings
 
 \renewcommand{\maketitle}{%
+  \if@usetitlepage
     \begin{titlepage}%
 
         \center 
@@ -141,11 +183,21 @@
         % University
         \vspace*{0.5cm}
         \textsc{\LARGE Vrije Universiteit Amsterdam}\\
-        \vspace{3.5cm}
 
         % Document info
-        % todo: Course info (opt)
-        %\textsc{\Large Molecular Modeling}\\[0.6cm]
+        \ifx\@coursename\@empty
+          % No course name
+          \vspace{3.5cm}
+        \else
+          \ifx\@coursecode\@empty
+            \vspace{2.5cm}
+            \textsc{\Large \@coursename}\\[0.6cm]
+          \else
+            \vspace{2cm}
+            \textsc{\Large \@coursename}\\[0.1cm]
+            \textsc{\@coursecode}\\[0.6cm]
+          \fi
+        \fi
 
         \HRule \\[0.8cm]
         { \huge \bfseries \@title}\\[0.6cm]								% Assignment
@@ -178,25 +230,45 @@
         \vfill 
         \includegraphics[width=0.6\textwidth]{figures/VU-logo_druk.pdf}\\[1cm] 	% University logo
     \end{titlepage}
+  \else
+    % No title page
+    % TODO: Add other information as options.
+    % As of now, only Title and Authorname are implemented for the no titlepage version.
+    % iets hier zorgt voor missing \begin{document}
+    \twocolumn[%
+      \begin{center}
+        {\Large \bfseries \@title}\par\vskip 1ex
+        {\scshape \@authname\ --- \href{mailto:\@email}{\@email}}\par\vskip 2ex
+        \hrule\vskip 3ex
+      \end{center}%
+    ]%
+  \fi
 }
 
-\makeatother
+%\AtBeginDocument{%
+%  \maketitle
+%  \if@useTOC
+%    \clearpage
+%    \tableofcontents
+%  \fi
+%  \if@usetitlepage
+%    \newpage
+%    \twocolumn
+%  \fi
+%}
 
-\ifx\includeTOC\true
-  \AtBeginDocument{%
-    \maketitle
+\AddToHook{begindocument/end}{%
+  \maketitle
+  \if@useTOC
     \clearpage
     \tableofcontents
+  \fi
+  \if@usetitlepage
     \newpage
     \twocolumn
-  }
-\else
-  \AtBeginDocument{%
-    \maketitle
-    \newpage
-    \twocolumn
-  }
-\fi
+  \fi
+}
+    
 
 \newcommand{\startSingleColumn}{%
   \clearpage
@@ -209,9 +281,17 @@
   \printbibliography[heading=none]
 }
 
-\newcommand{\printInlineBibliograpy}{%
+\newcommand{\printInlineBibliography}{%
   \section{\referenceslabel}
-  \printbibliograpy[heading=none]
+  \printbibliography[heading=none]
+}
+
+\newcommand{\printBibliography}{%
+  \if@useInlineBIB
+    \printInlineBibliography
+  \else
+    \printSingleColumnBibliography
+  \fi
 }
 
 \newcommand{\appendices}{%
@@ -234,4 +314,4 @@
   \setcounter{figure}{0}
 }
 
-
+\makeatother
