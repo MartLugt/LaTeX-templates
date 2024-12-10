@@ -58,7 +58,6 @@ See also the example in the VU-Paper folder.
 \date{December 2024}
 
 \begin{document}
-\maketitle
 
 \section{Introduction}
 This is an example document.
