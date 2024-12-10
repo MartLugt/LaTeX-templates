@@ -62,11 +62,12 @@ See also the example in the VU-Paper folder.
 \section{Introduction}
 This is an example document.
 
+\printBibliography
+
 \appendices
 \section{Additional Figures}
 Appendix content here.
 
-\printSingleColumnBibliography
 \end{document}
 ```
 
