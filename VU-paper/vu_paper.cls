@@ -30,6 +30,7 @@
 \@useInlineBIBfalse
 
 
+% TODO: print option that optimises for printing (empty page after titlepage etc).
 % OPTIONS:
 \DeclareOption{short}{%
   \@usetitlepagefalse
@@ -67,7 +68,7 @@
 % Pass all unknown options to parent (article) class.
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 
-\ExecuteOptions{titlepage, toc, english}
+\ExecuteOptions{titlepage, toc, english, twocolumn}
 \ProcessOptions\relax
 
 \LoadClass[10pt, a4paper]{article}
@@ -107,7 +108,16 @@
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}} 							% horizontal line and its thickness
 
-\renewenvironment{abstract}{\vspace{0.5ex}\begin{quote}}{\par\end{quote}\vskip 1ex\hrule\vskip 2ex}
+\if@usetitlepage%
+  \newenvironment{abs}{\onecolumn\clearpage\begin{quote}}{\par\end{quote}\twocolumn\clearpage}
+\else
+  \newenvironment{abs}{\@twocolumnfalse\vspace{0.2ex}\quotation}{\par\endquotation\vskip 1ex\hrule\vskip 3ex\@twocolumntrue}
+\fi
+
+\def\@abstract{}
+\renewcommand{\abstract}[1]{%
+  \gdef\@abstract{#1}
+}
 
 \titleformat{\subsection}{\bfseries}{}{0pt}{}{}
 
@@ -238,30 +248,34 @@
     \twocolumn[%
       \begin{center}
         {\Large \bfseries \@title}\par\vskip 1ex
-        {\scshape \@authname\ --- \href{mailto:\@email}{\@email}}\par\vskip 2ex
-        \hrule\vskip 3ex
+        {\scshape \@authname\ --- \href{mailto:\@email}{\@email}}\par\vskip 1ex
+        
+        \ifx\@abstract\@empty
+          \hrule\vskip 3ex
+        \else
+          \begin{abs}
+            \@abstract
+          \end{abs}
+        \fi
       \end{center}%
-    ]%
+          ]%
   \fi
 }
 
-%\AtBeginDocument{%
-%  \maketitle
-%  \if@useTOC
-%    \clearpage
-%    \tableofcontents
-%  \fi
-%  \if@usetitlepage
-%    \newpage
-%    \twocolumn
-%  \fi
-%}
 
 \AddToHook{begindocument/end}{%
   \maketitle
   \if@useTOC
-    \clearpage
-    \tableofcontents
+    \if@usetitlepage
+      \clearpage
+      \ifx\@abstract\@empty
+        %
+      \else
+        \@abstract
+        \clearpage
+      \fi
+      \tableofcontents
+    \fi
   \fi
   \if@usetitlepage
     \newpage
@@ -275,22 +289,22 @@
   \onecolumn
 }
 
-\newcommand{\printSingleColumnBibliography}{%
+\newcommand{\@printSingleColumnBibliography}{%
   \startSingleColumn
   \section{\referenceslabel}
   \printbibliography[heading=none]
 }
 
-\newcommand{\printInlineBibliography}{%
+\newcommand{\@printInlineBibliography}{%
   \section{\referenceslabel}
   \printbibliography[heading=none]
 }
 
 \newcommand{\printBibliography}{%
   \if@useInlineBIB
-    \printInlineBibliography
+    \@printInlineBibliography
   \else
-    \printSingleColumnBibliography
+    \@printSingleColumnBibliography
   \fi
 }
 
