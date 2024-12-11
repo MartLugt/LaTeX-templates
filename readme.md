@@ -2,12 +2,12 @@
 
 `vu_paper` is a LaTeX class for academic papers, assignments, and reports at **Vrije Universiteit Amsterdam**. This is not an official template, and this project is in no way, other than that I am a VU student, affiliated with the University. You are free to use this template according to the LPPL license as shown below.
 
-This template is based on a two-column layout, with a text size of `10pt`. The abstract should be on its own page (unless the `short` style is used), and the references should precede the appendices.
+This template is based on a two-column layout, with a text size of `10pt`. The abstract should be on its own page (unless the `short` style is used), before the table of contents, and the references should precede the appendices.
 
 Currently, two language options are implemented, `english` and `dutch`. These languages switch the labels for the titlepage and references section. 
 
-The template has two main styles, default and `short`. Both styles use a two-column layout for the main body. The default style includes a titlepage with a title and author, and optional course information and coursestaff. Furthermore, the default style includes a table of contents on the second page, and places the bibliography in a single column on its own page.
-The `short` style is meant for shorter, 1-4 page assignments. This style does not include a titlepage, instead placing the title and author information at the top of the first page. There is no support for other document metadata (yet). The short style also will not show a titlepage, regardless of the `toc` option. It also switches the bibliography to an inline style, which places it right in the two-column layout. 
+The template has two main styles, default and `short`. Both styles use a two-column layout for the main body. The default style includes a titlepage with a title and author, and optional course information and coursestaff. Furthermore, the default style includes an abstract on the second page, followed by a table of contents, and places the bibliography in a single column on its own page.
+The `short` style is meant for shorter, 1-4 page assignments. This style does not include a titlepage, instead placing the title, author information and abstract at the top of the first page. There is no support for other document metadata (yet). The short style also will not show a titlepage, regardless of the `toc` option. It also switches the bibliography to an inline style, which places it right in the two-column layout. 
 
 You are free to customise this behaviour with the options listed below.
 
@@ -33,6 +33,12 @@ You are free to customise this behaviour with the options listed below.
 - `\author{Name}[Email][Student Number]`: Sets the author name, email, and student number.
 - `\coursename{Name}[Code]`: Sets the course name and code.
 - `\addcoursestaff{Name}`: Adds course staff members.
+
+### Abstract
+
+- `\abstract{Text}`: Set the paper abstract.
+
+This abstract is printed on a seperate page between the titlepage and the table of contents in the default style, and as part of the title block in `short` style.
 
 ### Bibliography
 
