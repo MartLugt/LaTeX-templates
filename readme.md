@@ -9,6 +9,8 @@ Currently, two language options are implemented, `english` and `dutch`. These la
 The template has two main styles, default and `short`. Both styles use a two-column layout for the main body. The default style includes a titlepage with a title and author, and optional course information and coursestaff. Furthermore, the default style includes an abstract on the second page, followed by a table of contents, and places the bibliography in a single column on its own page.
 The `short` style is meant for shorter, 1-4 page assignments. This style does not include a titlepage, instead placing the title, author information and abstract at the top of the first page. There is no support for other document metadata (yet). The short style also will not show a titlepage, regardless of the `toc` option. It also switches the bibliography to an inline style, which places it right in the two-column layout. 
 
+When printing and binding the document, use the `print` option. This adds empty pages to ensure that important content is placed on the right page.
+
 You are free to customise this behaviour with the options listed below.
 
 ## Class Options
@@ -22,6 +24,7 @@ You are free to customise this behaviour with the options listed below.
 | `notoc`       | Excludes the table of contents.        |         | 
 | `inlinebib`   | Sets the bibliography style to inline. |         |
 | `noinlinebib` | Sets the bibliography style to one-column on a new page. | Yes |
+| `print`       | Optimizes the document for print mode. This adds empty pages, such that the abstract, toc and main content start on the right page. | |
 | `english`     | Sets the document language to English. | Yes     | 
 | `dutch`       | Sets the document language to Dutch.   |         |  
 

@@ -24,13 +24,14 @@
 \newif\if@usetitlepage
 \newif\if@useTOC
 \newif\if@useInlineBIB
+\newif\if@printmode
 
 \@usetitlepagetrue
 \@useTOCtrue
 \@useInlineBIBfalse
+\@printmodefalse
 
 
-% TODO: print option that optimises for printing (empty page after titlepage etc).
 % OPTIONS:
 \DeclareOption{short}{%
   \@usetitlepagefalse
@@ -60,6 +61,11 @@
 
 \DeclareOption{noinlinebib}{%
   \@useInlineBIBfalse
+}
+
+% todo: improve option. Now it adds empty pages, but should check that content is on right page, not naively add pages. Also extend to bibliography.
+\DeclareOption{print}{%
+  \@printmodetrue
 }
 
 \DeclareOption{english}{\def\@lang{english}}
@@ -244,7 +250,6 @@
     % No title page
     % TODO: Add other information as options.
     % As of now, only Title and Authorname are implemented for the no titlepage version.
-    % iets hier zorgt voor missing \begin{document}
     \twocolumn[%
       \begin{center}
         {\Large \bfseries \@title}\par\vskip 1ex
@@ -269,12 +274,40 @@
     \if@usetitlepage
       \clearpage
       \ifx\@abstract\@empty
-        %
+        \if@printmode
+          \newpage \ \newpage
+        \fi
+      \else
+        \if@printmode
+          \newpage \ \newpage
+          \@abstract
+          \clearpage
+          \newpage \ \newpage
+        \else
+          \@abstract
+          \clearpage
+        \fi
+      \fi
+      \tableofcontents
+      \if@printmode
+        \newpage \ \newpage
+      \fi
+    \fi
+  \else
+    \ifx\@abstract\@empty
+      \if@printmode
+        \newpage \ \newpage
+      \fi
+    \else
+      \if@printmode
+        \newpage \ \newpage
+        \@abstract
+        \clearpage
+        \newpage \ \newpage
       \else
         \@abstract
         \clearpage
       \fi
-      \tableofcontents
     \fi
   \fi
   \if@usetitlepage
